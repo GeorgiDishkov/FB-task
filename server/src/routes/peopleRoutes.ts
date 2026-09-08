@@ -2,6 +2,7 @@ import { Router } from 'express';
 import type { Request, Response } from 'express';
 
 import { PUBLIC_BASE_URL } from '../config.js';
+import { requireAuth } from '../middleware/requireAuth.js';
 import { getPeopleSlice, getTotalCount, getTotalPages } from '../store/peopleStore.js';
 import type { ApiErrorBody } from '../types.js';
 
@@ -50,5 +51,5 @@ export const peopleRouter = Router();
 
 // Both spellings, because the Star Wars API 301-redirects the unslashed form and we
 // mirror its behaviour without costing the client a round trip.
-peopleRouter.get('/people', getPeopleHandler);
-peopleRouter.get('/people/', getPeopleHandler);
+peopleRouter.get('/people', requireAuth, getPeopleHandler);
+peopleRouter.get('/people/', requireAuth, getPeopleHandler);

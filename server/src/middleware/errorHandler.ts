@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 
+import { AuthError } from '../auth/types.js';
 import type { ApiErrorBody } from '../types.js';
 
 export const notFoundHandler = (_request: Request, response: Response): void => {
@@ -23,6 +24,18 @@ export const errorHandler = (
   response: Response,
   _next: NextFunction,
 ): void => {
+  // Auth failures are expected outcomes, not faults: mapping them here keeps every
+  // handler free of try/catch, which would otherwise nest an `if` inside a `catch` and
+  // breach AGENT.md §3.
+  if (error instanceof AuthError) {
+    const body: ApiErrorBody = {
+      error: { code: error.code, message: error.message },
+    };
+
+    response.status(error.status).json(body);
+    return;
+  }
+
   console.error('[server] Unhandled error:', error);
 
   const body: ApiErrorBody = {

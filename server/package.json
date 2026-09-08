@@ -4,19 +4,22 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch --env-file=.env src/index.ts",
     "build": "tsc",
     "lint": "eslint . --max-warnings 0",
     "snapshot": "tsx scripts/fetchSnapshot.ts"
   },
   "dependencies": {
     "@fib/shared": "0.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "joi": "^17.13.3"
+    "joi": "^17.13.3",
+    "jose": "^6.2.12"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.13.3",
