@@ -5,6 +5,7 @@
 .shell {
   display: grid;
   place-items: center;
+  // dvh after vh: mobile browser chrome must not clip the card.
   min-height: 100vh;
   min-height: 100dvh;
   padding: tokens.space(4);
@@ -14,14 +15,20 @@
   @include mixins.card;
 
   display: grid;
-  gap: tokens.space(4);
+  gap: tokens.space(5);
   width: 100%;
+  // The only "breakpoint" the form needs — it is fluid below this.
   max-width: tokens.$form-max-width;
   padding: tokens.space(6);
 
   @include breakpoints.respond-to('sm') {
     padding: tokens.space(8);
   }
+}
+
+.header {
+  display: grid;
+  gap: tokens.space(1);
 }
 
 .eyebrow {
@@ -32,32 +39,13 @@
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   line-height: 1.2;
 }
 
-.error {
-  color: var(--c-danger);
-  font-size: tokens.$font-size-small;
-}
-
-.submit {
-  @include mixins.tap-target;
-
-  padding: tokens.space(3) tokens.space(4);
-  font-weight: 600;
-  color: var(--c-accent-ink);
-  background: var(--c-accent);
-  border: 0;
-  border-radius: tokens.$radius-sm;
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-.hint {
+.disclaimer {
+  padding-top: tokens.space(4);
+  border-top: 1px solid var(--c-border);
   color: var(--c-text-muted);
   font-size: tokens.$font-size-small;
 }

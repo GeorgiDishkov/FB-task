@@ -47,18 +47,6 @@
   font-size: tokens.$font-size-small;
 }
 
-.logout {
-  padding: tokens.space(2) tokens.space(3);
-  color: var(--c-text);
-  background: transparent;
-  border: 1px solid var(--c-border);
-  border-radius: tokens.$radius-sm;
-
-  &:hover {
-    border-color: var(--c-accent);
-  }
-}
-
 .body {
   max-width: 60ch;
   color: var(--c-text-muted);

@@ -1,0 +1,45 @@
+@use 'tokens' as tokens;
+@use 'mixins' as mixins;
+
+.field {
+  display: grid;
+  gap: tokens.space(1);
+}
+
+.label {
+  color: var(--c-text-muted);
+  font-size: tokens.$font-size-small;
+}
+
+.control {
+  width: 100%;
+  padding: tokens.space(3);
+  // 16px minimum: iOS Safari zooms the viewport when focusing anything smaller.
+  font-size: tokens.$font-size-base;
+  color: var(--c-text);
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  border-radius: tokens.$radius-sm;
+
+  &::placeholder {
+    color: var(--c-text-muted);
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+
+    border-color: var(--c-focus);
+  }
+}
+
+.invalid {
+  border-color: var(--c-danger);
+}
+
+.error {
+  // Reserved height, so revealing a message does not shift everything below it.
+  min-height: 1.25rem;
+  color: var(--c-danger);
+  font-size: tokens.$font-size-small;
+  line-height: 1.25rem;
+}

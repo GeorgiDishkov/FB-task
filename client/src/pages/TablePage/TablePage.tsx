@@ -1,19 +1,24 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { Button } from '@components/ui/Button';
 import { useAuth } from '@hooks/useAuth';
 import { ROUTES } from '@routes/paths';
 
 import styles from './TablePage.module.scss';
 
 /**
- * Phase 2 stub. The table, pagination, caching and offline handling arrive in phases
- * 4–6; this exists so the protected route and the logout path are demonstrable.
+ * Stub until Phase 4. The table, pagination, caching and offline handling arrive in
+ * phases 4–6; this exists so the protected route and the logout path are demonstrable.
  */
 export const TablePage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async (): Promise<void> => {
+    setIsLoggingOut(true);
+
     await logout();
     await navigate(ROUTES.login, { replace: true });
   };
@@ -22,20 +27,21 @@ export const TablePage = () => {
     <main className={styles.shell}>
       <header className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>Phase 2 stub</p>
+          <p className={styles.eyebrow}>Star Wars archive</p>
           <h1 className={styles.title}>Star Wars characters</h1>
         </div>
         <div className={styles.account}>
           <span className={styles.username}>{user?.username}</span>
-          <button
+          <Button
             type="button"
-            className={styles.logout}
+            variant="secondary"
+            isLoading={isLoggingOut}
             onClick={() => {
               void handleLogout();
             }}
           >
             Log out
-          </button>
+          </Button>
         </div>
       </header>
 
