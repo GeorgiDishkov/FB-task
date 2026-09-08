@@ -1,0 +1,19 @@
+@use 'tokens' as tokens;
+
+.shell {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: tokens.space(3);
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: tokens.space(4);
+}
+
+.title {
+  font-size: 1.5rem;
+}
+
+.link {
+  color: var(--c-accent);
+}

@@ -1,0 +1,9 @@
+@use 'tokens' as tokens;
+
+.shell {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: tokens.space(4);
+}

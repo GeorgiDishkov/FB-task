@@ -1,0 +1,65 @@
+@use 'tokens' as tokens;
+@use 'breakpoints' as breakpoints;
+
+.shell {
+  display: grid;
+  gap: tokens.space(4);
+  width: 100%;
+  max-width: tokens.$content-max-width;
+  margin: 0 auto;
+  padding: tokens.space(4);
+
+  @include breakpoints.respond-to('md') {
+    padding: tokens.space(8);
+  }
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: tokens.space(3);
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: tokens.space(4);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.eyebrow {
+  color: var(--c-accent);
+  font-size: tokens.$font-size-small;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+.account {
+  display: flex;
+  gap: tokens.space(3);
+  align-items: center;
+}
+
+.username {
+  color: var(--c-text-muted);
+  font-size: tokens.$font-size-small;
+}
+
+.logout {
+  padding: tokens.space(2) tokens.space(3);
+  color: var(--c-text);
+  background: transparent;
+  border: 1px solid var(--c-border);
+  border-radius: tokens.$radius-sm;
+
+  &:hover {
+    border-color: var(--c-accent);
+  }
+}
+
+.body {
+  max-width: 60ch;
+  color: var(--c-text-muted);
+}

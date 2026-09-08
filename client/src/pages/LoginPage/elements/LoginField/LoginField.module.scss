@@ -1,0 +1,18 @@
+@use 'tokens' as tokens;
+
+.field {
+  display: grid;
+  gap: tokens.space(1);
+  color: var(--c-text-muted);
+  font-size: tokens.$font-size-small;
+
+  input {
+    padding: tokens.space(3);
+    // 16px minimum: iOS Safari zooms the viewport when focusing anything smaller.
+    font-size: tokens.$font-size-base;
+    color: var(--c-text);
+    background: var(--c-surface-2);
+    border: 1px solid var(--c-border);
+    border-radius: tokens.$radius-sm;
+  }
+}

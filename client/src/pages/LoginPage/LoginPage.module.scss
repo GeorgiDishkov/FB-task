@@ -14,7 +14,7 @@
   @include mixins.card;
 
   display: grid;
-  gap: tokens.space(3);
+  gap: tokens.space(4);
   width: 100%;
   max-width: tokens.$form-max-width;
   padding: tokens.space(6);
@@ -36,6 +36,28 @@
   line-height: 1.2;
 }
 
-.body {
+.error {
+  color: var(--c-danger);
+  font-size: tokens.$font-size-small;
+}
+
+.submit {
+  @include mixins.tap-target;
+
+  padding: tokens.space(3) tokens.space(4);
+  font-weight: 600;
+  color: var(--c-accent-ink);
+  background: var(--c-accent);
+  border: 0;
+  border-radius: tokens.$radius-sm;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.hint {
   color: var(--c-text-muted);
+  font-size: tokens.$font-size-small;
 }

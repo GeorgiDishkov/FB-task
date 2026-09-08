@@ -75,8 +75,8 @@ That's noted as a "what I'd add next" line in the README rather than built now.
 |---|---|---|---|
 | 0 ✅ | Workspaces root + `client` scaffold, aliases, style tokens, **ESLint rules from AGENT.md §7**, lint/build green | [phase-0-outcome.md](phase-0-outcome.md) · [01-setup.md](FE/01-setup.md) · [07-styling.md](FE/07-styling.md) | done |
 | 1 ✅ | **`server`: snapshot script, in-memory store, `/api/people`, `/api/health`** | [phase-1-outcome.md](phase-1-outcome.md) · [BE/README.md](BE/README.md) | done |
-| 1b | **Server auth: `jose`, session store, login/refresh/logout/me, `requireAuth`, `.env`** | [auth.md](auth.md) | 1.5 h |
-| 2 | Routes + `AuthContext` (async bootstrap) + guards with a waiting state | [02-routing-auth.md](FE/02-routing-auth.md) · [auth.md](auth.md) | 1.25 h |
+| 1b ✅ | **Server auth: `jose`, session store, login/refresh/logout/me, `requireAuth`, `.env`** | [phase-2-outcome.md](phase-2-outcome.md) · [auth.md](auth.md) | done |
+| 2 ✅ | Routes + `AuthContext` (async bootstrap) + guards with a waiting state | [phase-2-outcome.md](phase-2-outcome.md) · [02-routing-auth.md](FE/02-routing-auth.md) | done |
 | 3 | `Input` / `Button` primitives + `LoginForm` + **Joi** schema + async submit + tests | [03-login-form.md](FE/03-login-form.md) | 1.75 h |
 | 4 | `swapi` service + `http` (attach/refresh-once/retry-once) + `usePeople` + **TanStack** `PeopleTable` + `Pagination` | [04-table-page.md](FE/04-table-page.md) · [auth.md](auth.md) | 2.75 h |
 | 5 | `cache.ts` envelope + TTL/version validation + Joi payload check + tests | [05-caching.md](FE/05-caching.md) | 1.0 h |
