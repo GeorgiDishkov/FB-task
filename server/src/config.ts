@@ -1,7 +1,19 @@
 export const PORT = Number(process.env.PORT ?? 3001);
 
-/** The Vite dev origin. Restricted rather than '*' — correct default even undeployed. */
-export const CORS_ORIGIN = process.env.CORS_ORIGIN ?? 'http://localhost:5173';
+/**
+ * The Vite dev server (5173) and `vite preview` (4173). Both are needed by default:
+ * previewing the production build otherwise fails CORS, which is a confusing way to
+ * discover that auth is origin-restricted.
+ *
+ * Still an explicit allow-list rather than '*' — and it has to be, because
+ * credentials: true is incompatible with a wildcard origin.
+ */
+export const CORS_ORIGINS = (
+  process.env.CORS_ORIGIN ?? 'http://localhost:5173,http://localhost:4173'
+)
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter((origin) => origin.length > 0);
 
 /** Used to build the `next` / `previous` links in the response. */
 export const PUBLIC_BASE_URL =

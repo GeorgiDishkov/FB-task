@@ -2,9 +2,15 @@
 @use 'mixins' as mixins;
 @use 'breakpoints' as breakpoints;
 
+// Deliberately NO overflow here. Setting overflow-x: auto makes the computed
+// overflow-y `auto` as well, which turns this into the nearest scrolling ancestor —
+// and the sticky <th> below would then stick to a box that never scrolls vertically,
+// so the header would silently scroll away. Verified: it did.
+//
+// A horizontal scroller is not needed anyway: table-layout: fixed plus
+// overflow-wrap: anywhere means the table cannot exceed its container at any width.
 .wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
 
 .table {
@@ -17,6 +23,26 @@
 
 .caption {
   @include mixins.visually-hidden;
+}
+
+// table-layout: fixed distributes width equally by default, which cramps the name
+// column and wastes space on two short numeric ones. Percentages rather than pixels
+// so the proportions hold at every width, and fixed layout means they cannot shift
+// between pages as content lengths change.
+.head th {
+  &:nth-child(1) {
+    width: 28%;
+  }
+
+  &:nth-child(2),
+  &:nth-child(3) {
+    width: 15%;
+  }
+
+  &:nth-child(4),
+  &:nth-child(5) {
+    width: 21%;
+  }
 }
 
 .head {

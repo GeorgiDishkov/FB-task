@@ -210,8 +210,14 @@ Notes:
   a deliberate trade, and it's the standard approach for this pattern.)
 - `767.98px` not `768px` — a `max-width: 768px` here plus `min-width: 768px` in
   `respond-to('md')` would both match at exactly 768px.
-- **Sticky header** (`position: sticky` on `th`) needs the scroll container to *not* have
-  `overflow: hidden`; the wrapper uses `overflow-x: auto` which is fine.
+- **Sticky header** (`position: sticky` on `th`). ⚠️ **The original claim here — that a
+  wrapper with `overflow-x: auto` is fine — was wrong, and Phase 7 measured it failing.**
+  Setting one overflow axis to a non-`visible` value forces the other to compute as
+  `auto`, so the wrapper becomes the nearest scrolling ancestor and the sticky `th`
+  resolves against a box that never scrolls vertically. The header silently scrolled
+  away (`top: -229px` after a 380px scroll). The wrapper now sets no overflow at all;
+  `table-layout: fixed` plus `overflow-wrap: anywhere` means the table cannot exceed its
+  container anyway. See [../phase-7-outcome.md](../phase-7-outcome.md).
 - `tbody tr:hover` is skipped on touch (`@media (hover: hover)`) — otherwise the hover
   state sticks after a tap.
 
