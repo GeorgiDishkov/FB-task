@@ -1,0 +1,30 @@
+@use 'mixins' as mixins;
+
+.ring {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--c-border);
+  border-top-color: var(--c-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.label {
+  @include mixins.visually-hidden;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// The global reduced-motion reset shortens the animation; stopping it outright avoids a
+// frozen-mid-rotation ring.
+@media (prefers-reduced-motion: reduce) {
+  .ring {
+    animation: none;
+    border-top-color: var(--c-border);
+  }
+}

@@ -1,0 +1,32 @@
+@use 'sass:map';
+
+// Mobile-first, min-width only. Mixing min- and max-width queries is how you get a
+// 1px gap at a boundary where neither rule applies. See plan/FE/07-styling.md.
+$breakpoints: (
+  'sm': 480px,
+  'md': 768px,
+  'lg': 1024px,
+  'xl': 1280px,
+);
+
+// The one place a max-width query is legitimate: the mobile card table, which must be
+// the exact complement of respond-to('md'). Kept here so the two can never drift.
+$below-md: 767.98px;
+
+@mixin respond-to($name) {
+  $breakpoint: map.get($breakpoints, $name);
+
+  @if not $breakpoint {
+    @error 'Unknown breakpoint: #{$name}. Known: #{map.keys($breakpoints)}.';
+  }
+
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}
+
+@mixin below-md {
+  @media (max-width: $below-md) {
+    @content;
+  }
+}

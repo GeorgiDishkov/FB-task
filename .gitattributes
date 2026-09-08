@@ -1,0 +1,8 @@
+# Normalise to LF in the repository; matches .editorconfig's end_of_line = lf.
+* text=auto eol=lf
+
+# Binary / generated
+*.png binary
+*.svg text eol=lf
+package-lock.json -diff linguist-generated
+server/data/people.json -diff linguist-generated

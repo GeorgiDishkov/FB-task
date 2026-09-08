@@ -1,0 +1,88 @@
+@use 'tokens' as tokens;
+@use 'mixins' as mixins;
+
+// Dark-first: it suits a Star Wars data console and reads as an intentional design
+// rather than a framework default. Colours are custom properties, so a light theme is
+// a matter of re-declaring these ten values. See plan/FE/07-styling.md.
+:root {
+  color-scheme: dark;
+
+  --c-bg: #0b0f1a;
+  --c-surface: #141a29;
+  --c-surface-2: #1b2334;
+  --c-border: #263048;
+  --c-text: #e8ecf5;
+  --c-text-muted: #a3b0cc;
+  --c-accent: #ffd166;
+  --c-accent-ink: #1a1200;
+  --c-danger: #ff8080;
+  --c-success: #4ade80;
+  --c-focus: #7dd3fc;
+
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.35);
+  --shadow-lg: 0 12px 40px rgb(0 0 0 / 0.5);
+
+  --header-height: 3.5rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: tokens.$font-sans;
+  font-size: tokens.$font-size-base;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+// Kills the inline-descender gap under images.
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+// Form controls do not inherit typography by default.
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+:focus-visible {
+  @include mixins.focus-ring;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
