@@ -1,0 +1,39 @@
+@use 'tokens' as tokens;
+@use 'breakpoints' as breakpoints;
+
+.nav {
+  display: grid;
+  gap: tokens.space(3);
+  justify-items: center;
+  padding-top: tokens.space(4);
+}
+
+.controls {
+  display: flex;
+  gap: tokens.space(2);
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pages {
+  display: none;
+  gap: tokens.space(1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  // The number strip appears only when there is room. Below md it is hidden and
+  // PageSummary underneath already states "Page 4 of 9", so nothing is lost.
+  @include breakpoints.respond-to('md') {
+    display: flex;
+  }
+}
+
+.gap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  color: var(--c-text-muted);
+}

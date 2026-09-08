@@ -1,0 +1,9 @@
+@use 'tokens' as tokens;
+
+.value {
+  font-variant-numeric: tabular-nums;
+
+  &[data-unknown='true'] {
+    color: var(--c-text-muted);
+  }
+}

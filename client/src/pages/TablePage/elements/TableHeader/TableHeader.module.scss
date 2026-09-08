@@ -1,0 +1,47 @@
+@use 'tokens' as tokens;
+
+.header {
+  display: flex;
+  gap: tokens.space(3);
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: tokens.space(4);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.titles {
+  display: grid;
+  gap: tokens.space(1);
+}
+
+.eyebrow {
+  color: var(--c-accent);
+  font-size: tokens.$font-size-small;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  display: flex;
+  gap: tokens.space(3);
+  align-items: center;
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+.count {
+  color: var(--c-text-muted);
+  font-size: tokens.$font-size-small;
+}
+
+.account {
+  display: flex;
+  gap: tokens.space(3);
+  align-items: center;
+}
+
+.username {
+  color: var(--c-text-muted);
+  font-size: tokens.$font-size-small;
+}

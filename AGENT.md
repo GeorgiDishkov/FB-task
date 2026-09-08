@@ -357,3 +357,10 @@ from an error when reading output.
 If a rule makes code genuinely worse in a specific spot, **say so and change the rule
 here** — don't add an `eslint-disable-next-line` and move on. One documented exception in
 this file beats scattered silenced warnings.
+
+### Recorded exceptions
+
+| Rule | Change | Why |
+|---|---|---|
+| `complexity` | **off for `**/*.tsx`**, still 8 for `.ts` | It counts every `&&`, `?.`, `??` and ternary. A component with three independent optional regions scores 14 with no nesting whatsoever, and shredding it into fragments to satisfy the metric makes it harder to read, not easier. The metric was designed for imperative branching; `max-depth: 1` and `no-nested-ternary` already prevent the problem it was meant to catch. |
+| `@typescript-eslint/no-unused-vars` | `**/*.d.ts` excluded from linting | A `declare module` augmentation must repeat the upstream type parameters *by name* — TypeScript compares them and rejects a mismatch with TS2428 — so they are unavoidably unused. Ambient type-only files do not carry runtime-code rules. |

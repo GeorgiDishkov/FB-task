@@ -1,0 +1,21 @@
+@use 'tokens' as tokens;
+
+.panel {
+  display: grid;
+  gap: tokens.space(3);
+  justify-items: start;
+  padding: tokens.space(4);
+  background: rgb(255 128 128 / 0.08);
+  border: 1px solid var(--c-danger);
+  border-radius: tokens.$radius-md;
+}
+
+.message {
+  color: var(--c-danger);
+}
+
+.actions {
+  display: flex;
+  gap: tokens.space(2);
+  flex-wrap: wrap;
+}

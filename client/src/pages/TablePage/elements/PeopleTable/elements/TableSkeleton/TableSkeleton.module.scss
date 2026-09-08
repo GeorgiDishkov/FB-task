@@ -1,0 +1,42 @@
+@use 'tokens' as tokens;
+@use 'breakpoints' as breakpoints;
+
+.row {
+  border-bottom: 1px solid var(--c-border);
+}
+
+.cell {
+  padding: tokens.space(3);
+}
+
+.bar {
+  display: block;
+  height: 0.85rem;
+  border-radius: tokens.$radius-pill;
+  background: linear-gradient(
+    90deg,
+    var(--c-surface-2) 0%,
+    var(--c-border) 50%,
+    var(--c-surface-2) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+// A frozen mid-shimmer gradient looks broken, so stop it outright rather than let the
+// global reduced-motion reset merely shorten it.
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    animation: none;
+    background: var(--c-surface-2);
+  }
+}

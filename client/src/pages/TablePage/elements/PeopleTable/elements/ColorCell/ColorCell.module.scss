@@ -1,0 +1,19 @@
+@use 'tokens' as tokens;
+
+.cell {
+  display: inline-flex;
+  gap: tokens.space(2);
+  align-items: center;
+}
+
+.swatch {
+  flex: 0 0 auto;
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 1px solid var(--c-border);
+  border-radius: 50%;
+}
+
+.unknown {
+  color: var(--c-text-muted);
+}

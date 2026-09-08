@@ -1,0 +1,10 @@
+@use 'tokens' as tokens;
+
+.row {
+  border-bottom: 1px solid var(--c-border);
+}
+
+.nameCell {
+  font-weight: 600;
+  text-align: left;
+}

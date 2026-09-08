@@ -1,0 +1,11 @@
+@use 'tokens' as tokens;
+@use 'mixins' as mixins;
+
+.content {
+  display: grid;
+  gap: tokens.space(4);
+}
+
+.status {
+  @include mixins.visually-hidden;
+}

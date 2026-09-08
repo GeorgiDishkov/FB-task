@@ -7,7 +7,7 @@ import tseslint from 'typescript-eslint';
 import { agentRules } from '../eslint.rules.js';
 
 export default tseslint.config(
-  { ignores: ['dist/**', 'node_modules/**', 'coverage/**'] },
+  { ignores: ['dist/**', 'node_modules/**', 'coverage/**', '**/*.d.ts'] },
 
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -32,6 +32,15 @@ export default tseslint.config(
     },
   },
 
+  {
+    // AGENT.md §8 exception. The complexity rule counts every &&, ?., ?? and ternary,
+    // which are the idiomatic way to express conditional rendering — a component with
+    // three independent optional regions scores 14 with no nesting at all. The metric
+    // was designed for imperative branching, and max-depth: 1 plus no-nested-ternary
+    // already prevent the problem it was meant to catch. Still enforced at 8 for .ts.
+    files: ['**/*.tsx'],
+    rules: { complexity: 'off' },
+  },
   {
     // Vite and Vitest require a default export from their config files.
     files: ['vite.config.ts'],

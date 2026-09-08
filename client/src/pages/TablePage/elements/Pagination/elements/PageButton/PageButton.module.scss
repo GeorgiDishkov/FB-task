@@ -1,0 +1,29 @@
+@use 'tokens' as tokens;
+@use 'mixins' as mixins;
+
+.page {
+  @include mixins.tap-target;
+
+  padding: tokens.space(2) tokens.space(3);
+  color: var(--c-text);
+  font-variant-numeric: tabular-nums;
+  background: transparent;
+  border: 1px solid var(--c-border);
+  border-radius: tokens.$radius-sm;
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+
+  &[aria-current='page'] {
+    color: var(--c-accent-ink);
+    background: var(--c-accent);
+    border-color: var(--c-accent);
+    font-weight: 700;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

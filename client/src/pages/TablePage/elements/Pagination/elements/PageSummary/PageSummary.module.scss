@@ -1,0 +1,7 @@
+@use 'tokens' as tokens;
+
+.summary {
+  color: var(--c-text-muted);
+  font-size: tokens.$font-size-small;
+  font-variant-numeric: tabular-nums;
+}

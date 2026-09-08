@@ -1,56 +1,47 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
-import { Button } from '@components/ui/Button';
 import { useAuth } from '@hooks/useAuth';
-import { ROUTES } from '@routes/paths';
+import { usePeople } from '@hooks/usePeople';
+
+import { TableContent } from './elements/TableContent';
+import { TableHeader } from './elements/TableHeader';
+import { usePageParam } from './usePageParam';
+import { useLogout } from './useLogout';
 
 import styles from './TablePage.module.scss';
 
-/**
- * Stub until Phase 4. The table, pagination, caching and offline handling arrive in
- * phases 4–6; this exists so the protected route and the logout path are demonstrable.
- */
 export const TablePage = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { user } = useAuth();
+  const { isLoggingOut, logout } = useLogout();
+  const { page, setPage } = usePageParam();
+  const { state, retry } = usePeople(page);
 
-  const handleLogout = async (): Promise<void> => {
-    setIsLoggingOut(true);
+  const data = state.data;
 
-    await logout();
-    await navigate(ROUTES.login, { replace: true });
-  };
+  /**
+   * The upper page bound can only be enforced once totalPages is known, so it is
+   * corrected here rather than in usePageParam. Typing ?page=99 directly is handled by
+   * the error state instead — that request fails before any count exists.
+   */
+  useEffect(() => {
+    if (data === null || page <= data.totalPages) {
+      return;
+    }
+
+    setPage(data.totalPages);
+  }, [data, page, setPage]);
 
   return (
     <main className={styles.shell}>
-      <header className={styles.header}>
-        <div>
-          <p className={styles.eyebrow}>Star Wars archive</p>
-          <h1 className={styles.title}>Star Wars characters</h1>
-        </div>
-        <div className={styles.account}>
-          <span className={styles.username}>{user?.username}</span>
-          <Button
-            type="button"
-            variant="secondary"
-            isLoading={isLoggingOut}
-            onClick={() => {
-              void handleLogout();
-            }}
-          >
-            Log out
-          </Button>
-        </div>
-      </header>
+      <TableHeader
+        username={user?.username}
+        totalCount={data?.totalCount}
+        isRefreshing={state.status === 'loading' && data !== null}
+        isLoggingOut={isLoggingOut}
+        onLogout={logout}
+      />
 
-      <p className={styles.body}>
-        You reached a protected route, so the session survived the guard. Refresh this
-        page: the access token is in memory and therefore gone, but the httpOnly refresh
-        cookie restores the session without a redirect.
-      </p>
-      <p className={styles.body}>The data table lands in Phase 4.</p>
+      <TableContent state={state} page={page} onPageChange={setPage} onRetry={retry} />
     </main>
   );
 };

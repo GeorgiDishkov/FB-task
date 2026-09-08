@@ -1,0 +1,122 @@
+@use 'tokens' as tokens;
+@use 'mixins' as mixins;
+@use 'breakpoints' as breakpoints;
+
+.wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  // Stops the layout jittering between pages as content lengths change.
+  table-layout: fixed;
+  text-align: left;
+}
+
+.caption {
+  @include mixins.visually-hidden;
+}
+
+.head {
+  th {
+    position: sticky;
+    top: 0;
+    z-index: tokens.$z-table-header;
+    padding: tokens.space(3);
+    color: var(--c-text-muted);
+    font-size: tokens.$font-size-small;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--c-surface-2);
+    white-space: nowrap;
+  }
+}
+
+.body {
+  th,
+  td {
+    padding: tokens.space(3);
+    vertical-align: top;
+    overflow-wrap: anywhere;
+  }
+
+  td[data-align='end'] {
+    text-align: right;
+  }
+
+  tr:nth-child(even) {
+    background: rgb(255 255 255 / 0.02);
+  }
+
+  // Skipped on touch, where a hover state sticks after a tap.
+  @media (hover: hover) {
+    tr:hover {
+      background: rgb(255 255 255 / 0.05);
+    }
+  }
+}
+
+.refreshing {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+// Mobile: one table, two layouts. Each row becomes a card and each cell a label/value
+// line, driven entirely by the data-label attribute — zero extra DOM, zero JS.
+@include breakpoints.below-md {
+  .table {
+    table-layout: auto;
+  }
+
+  // visually-hidden rather than display: none — the latter removes the header from the
+  // accessibility tree, so screen-reader users would lose the column names.
+  .head {
+    @include mixins.visually-hidden;
+  }
+
+  .body {
+    tr {
+      @include mixins.card;
+
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: tokens.space(1) tokens.space(3);
+      margin-bottom: tokens.space(3);
+      padding: tokens.space(4);
+      background: var(--c-surface);
+    }
+
+    th[scope='row'] {
+      grid-column: 1 / -1;
+      padding: 0 0 tokens.space(2);
+      font-size: tokens.$font-size-large;
+      border-bottom: 1px solid var(--c-border);
+    }
+
+    td {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: 1 / -1;
+      padding: 0;
+    }
+
+    td::before {
+      content: attr(data-label);
+      color: var(--c-text-muted);
+      font-size: tokens.$font-size-small;
+    }
+
+    td[data-align='end'] {
+      text-align: left;
+    }
+  }
+}
+
+.empty {
+  padding: tokens.space(6) tokens.space(3);
+  color: var(--c-text-muted);
+  text-align: center;
+}
