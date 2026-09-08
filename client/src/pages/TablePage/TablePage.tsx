@@ -34,7 +34,7 @@ export const TablePage = () => {
   return (
     <main className={styles.shell}>
       <TableHeader
-        username={user?.username}
+        displayName={user?.displayName}
         totalCount={data?.totalCount}
         cachedAt={state.cachedAt}
         hasData={data !== null}

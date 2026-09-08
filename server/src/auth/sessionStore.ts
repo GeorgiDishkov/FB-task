@@ -1,7 +1,7 @@
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 
 import { REFRESH_TOKEN_TTL_MS } from '../config.js';
-import type { SessionRecord } from './types.js';
+import type { SessionRecord, StoredUser } from './types.js';
 
 /**
  * The entire session database. Same reasoning as the people store: small, ephemeral, and
@@ -51,7 +51,7 @@ export const parseRefreshToken = (
 };
 
 export const createSession = (
-  username: string,
+  user: StoredUser,
 ): { session: SessionRecord; refreshToken: string } => {
   const sessionId = randomToken();
   const secret = randomToken();
@@ -59,7 +59,9 @@ export const createSession = (
 
   const session: SessionRecord = {
     sessionId,
-    username,
+    userId: user.id,
+    username: user.username,
+    displayName: user.displayName,
     refreshTokenHash: hashSecret(secret),
     createdAt: now,
     expiresAt: now + REFRESH_TOKEN_TTL_MS,

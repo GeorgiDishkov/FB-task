@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import { LoginPage } from '@pages/LoginPage';
 import { NotFoundPage } from '@pages/NotFoundPage';
+import { RegisterPage } from '@pages/RegisterPage';
 import { TablePage } from '@pages/TablePage';
 
 import { GuestOnlyRoute } from './GuestOnlyRoute';
@@ -15,6 +16,14 @@ export const AppRoutes = () => (
       element={
         <GuestOnlyRoute>
           <LoginPage />
+        </GuestOnlyRoute>
+      }
+    />
+    <Route
+      path={ROUTES.register}
+      element={
+        <GuestOnlyRoute>
+          <RegisterPage />
         </GuestOnlyRoute>
       }
     />

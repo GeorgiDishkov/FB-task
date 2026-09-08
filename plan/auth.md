@@ -10,20 +10,51 @@ Coding rules: [../AGENT.md](../AGENT.md).
 
 ## What this does and does not claim
 
-**There is still no user store.** The task supplies no credentials and defines success as
-"basic validation passes", so `POST /api/auth/login` accepts **any username/password pair
-that satisfies the 4–30 character rules**. That is stated plainly here and will be stated
-plainly in the repo README — the worst outcome would be a reviewer thinking this was
-mistaken for real credential verification.
+> **Updated:** an earlier version of this document said there was no user store and that
+> any valid-format pair was accepted. That is no longer true — a seeded account was added
+> in the final phase. See [phase-8-outcome.md](phase-8-outcome.md).
 
-What JWT and sessions genuinely add is a **real token lifecycle**: issue, verify, expire,
-refresh, rotate, revoke. That is the part the login flow was previously faking with a
-boolean in `sessionStorage`, and it is what makes "log in", "stay logged in across a
-refresh", and "log out everywhere" mean something.
+**Credentials are verified.** A single account is seeded into `server/data/users.json`:
 
-Adding a password hash comparison against a seeded user would be one more step; it is
-deliberately not taken, because inventing credentials the task never specified would make
-the demo *harder* to review, not more honest.
+| Username | Password |
+|---|---|
+| `admin` | `Password1!` |
+
+The file stores a salted **bcrypt** hash (cost 12), never the plaintext. Login looks the
+user up case-insensitively and verifies the password against that hash.
+
+**Registration is live at `/register`.** New accounts are appended to the same store and
+persisted, so they survive a restart. That made the user store the one thing in this
+project that is *written* to — see the note on persistence below.
+
+Two details make it behave like a real login rather than a demo shortcut:
+
+- **A wrong password and an unknown username return the identical error** (`401`,
+  `INVALID_CREDENTIALS`, same message). Distinguishing them would let an attacker
+  enumerate valid usernames.
+- **The missing-user branch burns the same KDF work** — a `bcrypt.compare` against a
+  throwaway hash. Otherwise "unknown user" returns in microseconds while "wrong password"
+  pays the full bcrypt cost — a timing oracle that gives the answer away regardless of the
+  response body.
+- **A taken username returns 409 `USERNAME_TAKEN`,** and uniqueness is checked
+  case-insensitively to match how login looks users up. Otherwise "Admin" could be
+  registered alongside "admin" and only one of them would ever be reachable.
+
+### Persistence, and what it cost
+
+Adding registration broke the "everything in memory, nothing written" design, and that
+was the honest consequence rather than something to work around: the moment users can
+create an account, "in memory with no persistence" stops being a design decision and
+becomes data loss. So the user store is no longer frozen, and `insertUser` writes
+`users.json` via **write-to-temp-then-rename**, which is atomic on one filesystem — a
+crash mid-write cannot leave a truncated store behind.
+
+There is no file locking, so genuinely concurrent registrations could interleave. Fine
+for a single-process demo; not a pattern to carry into production.
+
+**What is still not production-like:** no password reset, no account deletion, and
+sessions that vanish on server restart. Those are scope decisions, not oversights, and
+the repo README lists them.
 
 ---
 

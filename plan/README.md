@@ -82,7 +82,7 @@ That's noted as a "what I'd add next" line in the README rather than built now.
 | 5 ✅ | `cache.ts` envelope + TTL/version validation + Joi payload check + tests | [phase-5-outcome.md](phase-5-outcome.md) · [05-caching.md](FE/05-caching.md) | done |
 | 6 ✅ | `ErrorState` + retry + `useOnlineStatus` + `OfflineModal` | [phase-6-outcome.md](phase-6-outcome.md) · [06-offline-and-errors.md](FE/06-offline-and-errors.md) | done |
 | 7 ✅ | Responsive polish, a11y pass, mobile card-table, focus states | [phase-7-outcome.md](phase-7-outcome.md) · [09-testing-qa.md](FE/09-testing-qa.md) | done |
-| 8 | README, screenshots, manual QA matrix, repo push | [10-delivery.md](FE/10-delivery.md) | 1.0 h |
+| 8 ✅ | **Seeded `admin` account (scrypt)** + repo README, criteria mapping | [phase-8-outcome.md](phase-8-outcome.md) · [10-delivery.md](FE/10-delivery.md) | done |
 
 ≈ **15 h** of focused work — still inside the two-day window, but the slack is largely
 gone. The backend, Joi, TanStack and now JWT/sessions each add setup a hand-rolled
@@ -93,12 +93,12 @@ version wouldn't; the estimates above absorb it. Auth alone is ~+3 h across four
 
 ## Assumptions I'm making (all documented in the repo README too)
 
-1. **The token lifecycle is real; the credential check is not.** JWT, server-side
-   sessions, rotation and silent refresh all work as designed — but there is no user
-   store, because the task supplies no credentials. So any username/password pair passing
-   the 4–30 character rules is accepted. Stated plainly here, in [auth.md](auth.md), and
-   in the repo README: the worst outcome would be a reviewer thinking this was mistaken
-   for real credential verification.
+1. **Credentials are verified against a seeded account.** The task supplies none, so one
+   is seeded: **`admin` / `Password1!`**, stored in `server/data/users.json` as a salted
+   `scrypt` hash rather than plaintext. Login looks the user up and verifies the password;
+   a wrong password and an unknown username return the same error, with the same timing.
+   The token lifecycle (JWT, server-side sessions, rotation, silent refresh) is real too.
+   What is *not* production-like: one seeded row, no registration, no password reset.
 2. **Password length is validated raw, username is trimmed** before the length check.
    Leading/trailing spaces are legitimate password characters; in a username they're a typo.
 3. **Pagination is server-side.** SWAPI already pages at 10 items/page (`count: 87` → 9 pages),

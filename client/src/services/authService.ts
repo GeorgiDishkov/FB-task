@@ -61,6 +61,14 @@ const readTokens = async (response: Response): Promise<AuthUser> => {
 export const login = async (username: string, password: string): Promise<AuthUser> =>
   readTokens(await postToAuth('login', { username, password }));
 
+/** The server signs the new user straight in, so this returns tokens just like login. */
+export const register = async (
+  username: string,
+  password: string,
+  confirmPassword: string,
+): Promise<AuthUser> =>
+  readTokens(await postToAuth('register', { username, password, confirmPassword }));
+
 /**
  * Shared in-flight promise. Concurrent 401s would otherwise start several refreshes, and
  * rotation invalidates all but one — signing the user out in the middle of a *successful*

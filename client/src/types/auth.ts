@@ -1,5 +1,8 @@
 export interface AuthUser {
+  id: string;
   username: string;
+  /** Shown in the UI; the username is what you log in with. */
+  displayName: string;
 }
 
 /** Shape of POST /api/auth/login and /api/auth/refresh. The refresh token is

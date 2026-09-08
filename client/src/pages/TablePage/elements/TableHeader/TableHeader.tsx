@@ -7,7 +7,8 @@ import type { TableHeaderProps } from './types';
 import styles from './TableHeader.module.scss';
 
 export const TableHeader = (props: TableHeaderProps) => {
-  const { username, totalCount, cachedAt, hasData, isRefreshing, isLoggingOut } = props;
+  const { displayName, totalCount, cachedAt, hasData, isRefreshing, isLoggingOut } =
+    props;
 
   return (
     <header className={styles.header}>
@@ -28,7 +29,9 @@ export const TableHeader = (props: TableHeaderProps) => {
       </div>
 
       <div className={styles.account}>
-        {username !== undefined && <span className={styles.username}>{username}</span>}
+        {displayName !== undefined && (
+          <span className={styles.username}>{displayName}</span>
+        )}
 
         {/* Makes the cache demonstrable in two seconds during a review, and is
             genuinely useful besides. */}

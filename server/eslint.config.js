@@ -23,6 +23,12 @@ export default tseslint.config(
   },
 
   {
+    // Vitest requires a default export from its config file.
+    files: ['vitest.config.ts'],
+    rules: { 'no-restricted-syntax': 'off' },
+  },
+
+  {
     // This config file itself is plain JS and outside any tsconfig project.
     files: ['**/*.js'],
     extends: [tseslint.configs.disableTypeChecked],

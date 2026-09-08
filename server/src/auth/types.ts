@@ -1,15 +1,31 @@
+/** What the client is told about the signed-in user. Never the hash. */
 export interface AuthUser {
+  id: string;
   username: string;
+  displayName: string;
+}
+
+/** A row in the user store. Mirrors what a real users table would hold. */
+export interface StoredUser {
+  id: string;
+  username: string;
+  displayName: string;
+  /** bcrypt hash — `$2b$12$<salt><digest>`, salt and cost included. Never a plaintext password. */
+  passwordHash: string;
+  createdAt: string;
 }
 
 export interface AccessTokenClaims {
+  userId: string;
   username: string;
   sessionId: string;
 }
 
 export interface SessionRecord {
   sessionId: string;
+  userId: string;
   username: string;
+  displayName: string;
   /** SHA-256 of the refresh secret. The store never holds a usable credential. */
   refreshTokenHash: string;
   createdAt: number;
@@ -29,6 +45,8 @@ export interface IssuedTokens {
 
 export type AuthErrorCode =
   | 'INVALID_CREDENTIALS_FORMAT'
+  | 'INVALID_CREDENTIALS'
+  | 'USERNAME_TAKEN'
   | 'NO_SESSION'
   | 'SESSION_EXPIRED'
   | 'SESSION_REVOKED'

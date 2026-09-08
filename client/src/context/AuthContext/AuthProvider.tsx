@@ -5,6 +5,7 @@ import {
   login as requestLogin,
   logout as requestLogout,
   refreshSession,
+  register as requestRegister,
 } from '@services/authService';
 import type { AuthStatus, AuthUser } from '@/types';
 
@@ -48,6 +49,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     setStatus('authenticated');
   }, []);
 
+  const register = useCallback(
+    async (username: string, password: string, confirmPassword: string) => {
+      const created = await requestRegister(username, password, confirmPassword);
+
+      setUser(created);
+      setStatus('authenticated');
+    },
+    [],
+  );
+
   const logout = useCallback(async () => {
     // Clear local state first: even if the request fails, the user asked to be signed
     // out and the UI must honour that.
@@ -60,8 +71,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   // Memoised because the provider hands this object to every consumer — without it,
   // each provider render would be a new identity and defeat the point.
   const value = useMemo<AuthContextValue>(
-    () => ({ status, user, login, logout }),
-    [status, user, login, logout],
+    () => ({ status, user, login, register, logout }),
+    [status, user, login, register, logout],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;
