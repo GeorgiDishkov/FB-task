@@ -15,7 +15,7 @@ Stack summary: [../tech-stack.md](../tech-stack.md) · Coding rules: [../../AGEN
 |---|---|
 | Serve 87 Star Wars people, paginated 10 at a time | Write, update or delete anything |
 | Mirror the SWAPI response shape exactly | Talk to a database |
-| Report health | Store users or verify passwords |
+| **Verify credentials against a seeded, scrypt-hashed account** | Register users, reset passwords, or store more than one row |
 | **Issue, verify, refresh and revoke tokens** | Rate-limit, log to a service, or run in a container |
 | Set CORS for the Vite dev origin, with credentials | Persist anything across a restart |
 

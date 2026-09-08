@@ -204,10 +204,13 @@ Three decisions worth stating here because they are the ones that get done wrong
   boolean guard would redirect a signed-in user to the login page on every refresh. The
   union makes "don't know yet" representable, so waiting becomes the natural thing to write.
 
-**Honest scope note:** there is still no user store, so any 4–30 character
-username/password pair is accepted. What this adds is a real token lifecycle — issue,
-verify, expire, refresh, rotate, revoke — replacing the `sessionStorage` boolean the login
-flow was previously faking. The repo README says so plainly.
+**Credentials are real.** A seeded account lives in `server/data/users.json` — `admin`
+with a salted **bcrypt** hash, no plaintext — and the password is verified against it.
+Registration at `/register` appends new accounts to the same store.
+Unknown username and wrong password return the same code, and the missing-user branch
+burns the same KDF work, so neither the body nor the timing reveals which usernames
+exist. The only thing still unlike production is that there is one seeded row and no
+registration flow.
 
 ### Why in-memory JSON is the right call here
 

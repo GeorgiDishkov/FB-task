@@ -1,0 +1,11 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "admin",
+      "displayName": "Admin",
+      "passwordHash": "$2b$12$haYVNOWAZQJG8j2GVJSSq./EyR4/0VkhHKhUqc4M0EXES2pmtmtiW",
+      "createdAt": "2026-09-08T21:43:28.175Z"
+    }
+  ]
+}

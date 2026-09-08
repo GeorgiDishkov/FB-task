@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AuthContext } from '@context/AuthContext';
+import { AuthRequestError } from '@services/authService';
 import type { AuthContextValue } from '@context/AuthContext';
 
 import { LoginForm } from './LoginForm';
@@ -15,6 +16,7 @@ const renderForm = () => {
     status: 'anonymous',
     user: null,
     login,
+    register: vi.fn(),
     logout: vi.fn(),
   };
 
@@ -112,16 +114,44 @@ describe('LoginForm', () => {
     expect(login).toHaveBeenCalledExactlyOnceWith('georgi', ' secret ');
   });
 
-  it('surfaces a server failure without disabling the form', async () => {
+  it('surfaces an unreachable server without disabling the form', async () => {
     const user = userEvent.setup();
     login.mockRejectedValue(new Error('offline'));
     renderForm();
 
-    await user.type(usernameInput(), 'georgi');
-    await user.type(passwordInput(), 'secret123');
+    await user.type(usernameInput(), 'admin');
+    await user.type(passwordInput(), 'Password1!');
     await user.click(submitButton());
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(/could not sign you in/i);
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      /could not reach the server/i,
+    );
     expect(submitButton()).toBeEnabled();
+  });
+
+  /**
+   * Rejected credentials and an unreachable server need different advice. The server
+   * returns one code for both a wrong password and an unknown username, so this
+   * message cannot reveal which it was.
+   */
+  it('reports rejected credentials distinctly from a connection failure', async () => {
+    const user = userEvent.setup();
+    login.mockRejectedValue(
+      new AuthRequestError(
+        'INVALID_CREDENTIALS',
+        401,
+        'Username or password is incorrect.',
+      ),
+    );
+    renderForm();
+
+    await user.type(usernameInput(), 'admin');
+    await user.type(passwordInput(), 'wrongpass');
+    await user.click(submitButton());
+
+    const alert = await screen.findByRole('alert');
+
+    expect(alert).toHaveTextContent(/username or password is incorrect/i);
+    expect(alert).not.toHaveTextContent(/connection/i);
   });
 });

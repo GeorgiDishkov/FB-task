@@ -10,13 +10,11 @@ const secretKey = new TextEncoder().encode(JWT_SECRET);
 export const accessTokenLifetimeSeconds = (): number =>
   Math.floor(ACCESS_TOKEN_TTL_MS / 1000);
 
-export const signAccessToken = async (
-  username: string,
-  sessionId: string,
-): Promise<string> =>
-  new SignJWT({ sid: sessionId })
+/** Subject is the user id, not the username: an id is stable, a display name is not. */
+export const signAccessToken = async (claims: AccessTokenClaims): Promise<string> =>
+  new SignJWT({ sid: claims.sessionId, usr: claims.username })
     .setProtectedHeader({ alg: ALGORITHM })
-    .setSubject(username)
+    .setSubject(claims.userId)
     .setIssuedAt()
     .setExpirationTime(Math.floor((Date.now() + ACCESS_TOKEN_TTL_MS) / 1000))
     .sign(secretKey);
@@ -30,12 +28,17 @@ export const signAccessToken = async (
 export const verifyAccessToken = async (token: string): Promise<AccessTokenClaims> => {
   const payload = await readPayload(token);
   const sessionId = payload.sid;
+  const username = payload.usr;
 
   if (typeof payload.sub !== 'string' || typeof sessionId !== 'string') {
     throw new AuthError('UNAUTHENTICATED', 401, 'Token is missing required claims.');
   }
 
-  return { username: payload.sub, sessionId };
+  if (typeof username !== 'string') {
+    throw new AuthError('UNAUTHENTICATED', 401, 'Token is missing required claims.');
+  }
+
+  return { userId: payload.sub, username, sessionId };
 };
 
 const readPayload = async (token: string) => {

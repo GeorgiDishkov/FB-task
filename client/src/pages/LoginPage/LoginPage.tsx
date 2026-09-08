@@ -1,3 +1,7 @@
+import { Link } from 'react-router-dom';
+
+import { ROUTES } from '@routes/paths';
+
 import { LoginForm } from './elements/LoginForm';
 
 import styles from './LoginPage.module.scss';
@@ -14,10 +18,26 @@ export const LoginPage = () => (
 
       <LoginForm />
 
-      <p className={styles.disclaimer}>
-        There is no user store: any username and password of 4–30 characters is accepted.
-        The token lifecycle is real; the credential check is not.
+      <p className={styles.switch}>
+        No account yet? <Link to={ROUTES.register}>Create one</Link>
       </p>
+
+      {/* A demo login nobody can guess is a demo nobody can try. The account is seeded
+          in the server's user store as a salted bcrypt hash — the password below is
+          verified against it, not waved through. */}
+      <div className={styles.demo}>
+        <p className={styles.demoTitle}>Demo account</p>
+        <dl className={styles.credentials}>
+          <dt>Username</dt>
+          <dd>
+            <code>admin</code>
+          </dd>
+          <dt>Password</dt>
+          <dd>
+            <code>Password1!</code>
+          </dd>
+        </dl>
+      </div>
     </div>
   </main>
 );

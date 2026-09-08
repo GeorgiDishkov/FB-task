@@ -5,6 +5,7 @@ import {
   FIELD_MIN_LENGTH,
   isLoginFormValid,
   validateLoginForm,
+  validateRegisterForm,
 } from './validation';
 
 const VALID = { username: 'georgi', password: 'secret123' };
@@ -103,5 +104,86 @@ describe('validateLoginForm · both fields', () => {
     for (const message of messages) {
       expect(message).not.toContain('"');
     }
+  });
+});
+
+describe('validateRegisterForm', () => {
+  const VALID_REGISTRATION = {
+    username: 'newbie',
+    password: 'Secret123',
+    confirmPassword: 'Secret123',
+  };
+
+  it('accepts a valid registration', () => {
+    expect(validateRegisterForm(VALID_REGISTRATION)).toEqual({});
+  });
+
+  /** The whole point of the third field. */
+  it('rejects a mismatched confirmation', () => {
+    const errors = validateRegisterForm({
+      ...VALID_REGISTRATION,
+      confirmPassword: 'Secret124',
+    });
+
+    expect(errors.confirmPassword).toBe('Passwords do not match.');
+    expect(errors.password).toBeUndefined();
+  });
+
+  /**
+   * An empty confirmation against a filled password fails the *match* rule, not the
+   * empty rule: Joi checks `.valid()` as a whitelist first, and '' is not the password.
+   * "Passwords do not match" is the accurate thing to say about it.
+   */
+  it('treats an empty confirmation as a mismatch', () => {
+    const errors = validateRegisterForm({ ...VALID_REGISTRATION, confirmPassword: '' });
+
+    expect(errors.confirmPassword).toBe('Passwords do not match.');
+  });
+
+  /**
+   * Joi's default for a failed `ref` reads '"confirmPassword" must be [ref:password]',
+   * which would leak the schema's internals into the UI.
+   */
+  it('never leaks a Joi ref message', () => {
+    const errors = validateRegisterForm({
+      ...VALID_REGISTRATION,
+      confirmPassword: 'nope',
+    });
+
+    expect(errors.confirmPassword).not.toContain('ref:');
+    expect(errors.confirmPassword).not.toContain('"');
+  });
+
+  /** Registration deliberately uses the same 4–30 rule as login, not a stricter one. */
+  it('applies the same length rules as the login form', () => {
+    const errors = validateRegisterForm({
+      username: 'ab',
+      password: 'abc',
+      confirmPassword: 'abc',
+    });
+
+    expect(errors.username).toBe(
+      `Username must be at least ${FIELD_MIN_LENGTH} characters.`,
+    );
+    expect(errors.password).toBe(
+      `Password must be at least ${FIELD_MIN_LENGTH} characters.`,
+    );
+  });
+
+  /**
+   * Both real fields report at once (the `abortEarly: false` guarantee). The
+   * confirmation is deliberately *not* among them: two empty strings do match, so
+   * `.valid()` accepts it and short-circuits the base string rules. Flagging a third
+   * error the user cannot act on separately would be noise — the password error
+   * already says what is wrong.
+   */
+  it('reports both real fields at once, and does not add a spurious match error', () => {
+    const errors = validateRegisterForm({
+      username: '',
+      password: '',
+      confirmPassword: '',
+    });
+
+    expect(Object.keys(errors).sort()).toEqual(['password', 'username']);
   });
 });

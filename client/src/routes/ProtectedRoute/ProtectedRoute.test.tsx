@@ -11,8 +11,12 @@ import { ProtectedRoute } from './ProtectedRoute';
 const renderAt = (status: AuthStatus) => {
   const value: AuthContextValue = {
     status,
-    user: status === 'authenticated' ? { username: 'georgi' } : null,
+    user:
+      status === 'authenticated'
+        ? { id: '1', username: 'admin', displayName: 'Admin' }
+        : null,
     login: vi.fn(),
+    register: vi.fn(),
     logout: vi.fn(),
   };
 

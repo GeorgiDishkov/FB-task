@@ -34,3 +34,24 @@ export const loginSchema = Joi.object<LoginBody, true>({
   username: Joi.string().trim().min(FIELD_MIN_LENGTH).max(FIELD_MAX_LENGTH).required(),
   password: Joi.string().min(FIELD_MIN_LENGTH).max(FIELD_MAX_LENGTH).required(),
 });
+
+export interface RegisterBody {
+  username: string;
+  password: string;
+  confirmPassword: string;
+}
+
+/**
+ * Deliberately the same 4–30 rule as login rather than a stricter policy for new
+ * accounts. Requirement 2 defines that rule for this app, and having two different
+ * definitions of "a valid password" — one to sign up with, another to sign in with —
+ * would be a contradiction waiting to confuse someone.
+ *
+ * What registration adds is the confirmation field, which catches a typo in a value the
+ * user cannot see.
+ */
+export const registerSchema = Joi.object<RegisterBody, true>({
+  username: Joi.string().trim().min(FIELD_MIN_LENGTH).max(FIELD_MAX_LENGTH).required(),
+  password: Joi.string().min(FIELD_MIN_LENGTH).max(FIELD_MAX_LENGTH).required(),
+  confirmPassword: Joi.string().required().valid(Joi.ref('password')),
+});

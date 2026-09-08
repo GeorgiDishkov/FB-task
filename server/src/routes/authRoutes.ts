@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import type { Request, Response } from 'express';
 
-import { login, logout, refresh } from '../auth/authService.js';
+import { login, logout, refresh, register } from '../auth/authService.js';
 import type { IssuedTokens } from '../auth/types.js';
 import { AuthError } from '../auth/types.js';
 import {
@@ -11,7 +11,7 @@ import {
 } from '../config.js';
 import { withAuth } from '../middleware/requireAuth.js';
 import type { ApiErrorBody } from '../types.js';
-import { loginSchema } from './schemas.js';
+import { loginSchema, registerSchema } from './schemas.js';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -69,7 +69,29 @@ const loginHandler = async (request: Request, response: Response): Promise<void>
     return;
   }
 
-  sendTokens(response, await login(result.value.username));
+  sendTokens(response, await login(result.value.username, result.value.password));
+};
+
+const registerHandler = async (request: Request, response: Response): Promise<void> => {
+  const result = registerSchema.validate(request.body, {
+    abortEarly: false,
+    convert: true,
+  });
+
+  if (result.error) {
+    const body: ApiErrorBody = {
+      error: {
+        code: 'INVALID_CREDENTIALS_FORMAT',
+        message:
+          'Username and password must each be 4–30 characters, and the passwords must match.',
+      },
+    };
+
+    response.status(400).json(body);
+    return;
+  }
+
+  sendTokens(response, await register(result.value.username, result.value.password));
 };
 
 const refreshHandler = async (request: Request, response: Response): Promise<void> => {
@@ -87,12 +109,19 @@ const logoutHandler = (request: Request, response: Response): void => {
 
 export const authRouter = Router();
 
+authRouter.post('/auth/register', registerHandler);
 authRouter.post('/auth/login', loginHandler);
 authRouter.post('/auth/refresh', refreshHandler);
 authRouter.post('/auth/logout', logoutHandler);
 authRouter.get(
   '/auth/me',
   withAuth((_request, response, claims) => {
-    response.json({ user: { username: claims.username } });
+    response.json({
+      user: {
+        id: claims.userId,
+        username: claims.username,
+        displayName: claims.username,
+      },
+    });
   }),
 );

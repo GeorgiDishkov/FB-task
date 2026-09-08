@@ -270,6 +270,10 @@ Every decision that was later overturned, so no doc reads as if it were always t
 | 9 | `@use '@styles/tokens'` in SCSS | `loadPaths` + bare `@use 'tokens'` | §5, robustness |
 | 10 | `@types/*` path alias | `@/types` | §5, scope collision |
 | 11 | Server emits `dist/`, has `start` | `noEmit`, type-check only | §6, nothing is deployed |
+| 12 | No user store; any valid-format pair accepted | Seeded `admin` account, scrypt-hashed, really verified | §8, user instruction |
+| 13 | No `bcrypt`/`argon2` — "no stored password to hash" | `scrypt` from `node:crypto` | §8, consequence of 12 |
+| 14 | `scrypt` from `node:crypto` | **`bcrypt`** at cost 12 | §9, user instruction |
+| 15 | Read-only user store, frozen in memory | Writable and persisted — registration appends | §9, consequence of adding `/register` |
 
 ## Open items awaiting a call
 
