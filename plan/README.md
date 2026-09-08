@@ -80,7 +80,7 @@ That's noted as a "what I'd add next" line in the README rather than built now.
 | 3 ✅ | `Input` / `Button` primitives + `LoginForm` + **Joi** schema + async submit + tests | [phase-3-outcome.md](phase-3-outcome.md) · [03-login-form.md](FE/03-login-form.md) | done |
 | 4 ✅ | `swapi` service + `http` (attach/refresh-once/retry-once) + `usePeople` + **TanStack** `PeopleTable` + `Pagination` | [phase-4-outcome.md](phase-4-outcome.md) · [04-table-page.md](FE/04-table-page.md) | done |
 | 5 ✅ | `cache.ts` envelope + TTL/version validation + Joi payload check + tests | [phase-5-outcome.md](phase-5-outcome.md) · [05-caching.md](FE/05-caching.md) | done |
-| 6 | `ErrorState` + retry + `useOnlineStatus` + `OfflineModal` | [06-offline-and-errors.md](FE/06-offline-and-errors.md) | 1.25 h |
+| 6 ✅ | `ErrorState` + retry + `useOnlineStatus` + `OfflineModal` | [phase-6-outcome.md](phase-6-outcome.md) · [06-offline-and-errors.md](FE/06-offline-and-errors.md) | done |
 | 7 | Responsive polish, a11y pass, mobile card-table, focus states | [07-styling.md](FE/07-styling.md) · [09-testing-qa.md](FE/09-testing-qa.md) | 1.5 h |
 | 8 | README, screenshots, manual QA matrix, repo push | [10-delivery.md](FE/10-delivery.md) | 1.0 h |
 

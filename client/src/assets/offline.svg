@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" width="200" height="140" role="img" aria-label="A disconnected plug and socket">
+  <!-- Colours are hardcoded to the palette rather than using CSS custom properties:
+       an SVG loaded through <img> is an isolated document and cannot inherit them.
+       Fine while the app is dark-only; inline the SVG if a light theme ever lands. -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="5">
+    <!-- left cable -->
+    <path stroke="#263048" d="M6 70h28" />
+    <!-- socket body -->
+    <rect x="34" y="46" width="42" height="48" rx="10" fill="#1b2334" stroke="#93a0bd" />
+    <!-- socket holes -->
+    <path stroke="#93a0bd" d="M76 60h10M76 80h10" />
+
+    <!-- plug prongs -->
+    <path stroke="#ffd166" d="M114 60h-10M114 80h-10" />
+    <!-- plug body -->
+    <rect x="114" y="46" width="42" height="48" rx="10" fill="#1b2334" stroke="#ffd166" />
+    <!-- right cable -->
+    <path stroke="#263048" d="M156 70h38" />
+
+    <!-- break marks in the gap -->
+    <path stroke="#ff8080" stroke-width="4" d="M95 34l-6 9 8 4-7 10" />
+    <path stroke="#ff8080" stroke-width="4" d="M100 112l6-9-8-4 7-10" opacity="0.65" />
+  </g>
+</svg>

@@ -1,4 +1,5 @@
-import { AppError, toAppError } from '@lib/errors';
+import { reportNetworkFailure, reportNetworkSuccess } from '@lib/connectivity';
+import { AppError, isOfflineError, toAppError } from '@lib/errors';
 
 import { getAccessToken, refreshSession } from './authService';
 import { REQUEST_TIMEOUT_MS, SERVER_BASE_URL } from './constants';
@@ -28,18 +29,40 @@ const buildSignal = (callerSignal: AbortSignal | undefined): AbortSignal => {
   return AbortSignal.any([callerSignal, timeoutSignal]);
 };
 
+/**
+ * Extracted rather than inlined in the catch block: a `catch` containing an `if` is
+ * nesting depth two, which AGENT.md §3 forbids — and the flat version reads better.
+ *
+ * A rejected fetch is the only signal that catches an unreachable server while
+ * navigator.onLine still claims we are online.
+ */
+const toReportedError = (error: unknown): AppError => {
+  const appError = toAppError(error);
+
+  if (isOfflineError(appError)) {
+    reportNetworkFailure();
+  }
+
+  return appError;
+};
+
 const sendRequest = async (url: string, signal: AbortSignal): Promise<Response> => {
   const token = isOwnApi(url) ? getAccessToken() : null;
 
   try {
-    return await fetch(url, {
+    const response = await fetch(url, {
       signal,
       // Always an object: exactOptionalPropertyTypes rejects an explicit undefined here.
       headers: token === null ? {} : { Authorization: `Bearer ${token}` },
       credentials: isOwnApi(url) ? 'include' : 'omit',
     });
+
+    // Any answer at all means the network is reachable, whatever the status code.
+    reportNetworkSuccess();
+
+    return response;
   } catch (error) {
-    throw toAppError(error);
+    throw toReportedError(error);
   }
 };
 

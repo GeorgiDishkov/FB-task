@@ -1,0 +1,58 @@
+@use 'tokens' as tokens;
+@use 'mixins' as mixins;
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: tokens.$z-modal-backdrop;
+  display: grid;
+  place-items: center;
+  padding: tokens.space(4);
+  background: rgb(0 0 0 / 0.6);
+  animation: fade 0.15s ease-out;
+}
+
+.panel {
+  @include mixins.card;
+
+  position: relative;
+  z-index: tokens.$z-modal-panel;
+  display: grid;
+  gap: tokens.space(4);
+  justify-items: center;
+  width: 100%;
+  max-width: 24rem;
+  padding: tokens.space(6);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  animation: rise 0.15s ease-out;
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+.title {
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .panel {
+    animation: none;
+  }
+}

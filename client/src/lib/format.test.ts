@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  describeAge,
   describeRange,
   EM_DASH,
   formatColor,
@@ -64,5 +65,23 @@ describe('describeRange', () => {
 
   it('describes the first page', () => {
     expect(describeRange(1, 10, 87)).toBe('1–10 of 87');
+  });
+});
+
+describe('describeAge', () => {
+  const NOW = 1_700_000_000_000;
+
+  it.each([
+    ['seconds', 5_000, 'just now'],
+    ['one minute', 60_000, '1m ago'],
+    ['forty minutes', 40 * 60_000, '40m ago'],
+    ['two hours', 2 * 3_600_000, '2h ago'],
+  ])('describes an age of %s', (_case, elapsed, expected) => {
+    expect(describeAge(NOW - elapsed, NOW)).toBe(expected);
+  });
+
+  /** A clock that moved backwards must not produce a negative age. */
+  it('clamps a future timestamp to "just now"', () => {
+    expect(describeAge(NOW + 60_000, NOW)).toBe('just now');
   });
 });

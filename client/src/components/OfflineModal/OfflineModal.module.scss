@@ -1,0 +1,17 @@
+@use 'tokens' as tokens;
+
+.image {
+  width: 10rem;
+  height: 7rem;
+}
+
+.body {
+  color: var(--c-text-muted);
+}
+
+.actions {
+  display: flex;
+  gap: tokens.space(2);
+  flex-wrap: wrap;
+  justify-content: center;
+}

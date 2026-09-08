@@ -1,0 +1,27 @@
+@use 'tokens' as tokens;
+@use 'mixins' as mixins;
+
+.shell {
+  display: grid;
+  gap: tokens.space(4);
+  place-content: center;
+  justify-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: tokens.space(4);
+  text-align: center;
+}
+
+.panel {
+  @include mixins.card;
+
+  display: grid;
+  gap: tokens.space(4);
+  justify-items: center;
+  max-width: 26rem;
+  padding: tokens.space(6);
+}
+
+.body {
+  color: var(--c-text-muted);
+}
