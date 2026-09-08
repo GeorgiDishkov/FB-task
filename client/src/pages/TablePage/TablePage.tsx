@@ -14,7 +14,7 @@ export const TablePage = () => {
   const { user } = useAuth();
   const { isLoggingOut, logout } = useLogout();
   const { page, setPage } = usePageParam();
-  const { state, retry } = usePeople(page);
+  const { state, retry, refresh } = usePeople(page);
 
   const data = state.data;
 
@@ -36,8 +36,11 @@ export const TablePage = () => {
       <TableHeader
         username={user?.username}
         totalCount={data?.totalCount}
+        cachedAt={state.cachedAt}
+        hasData={data !== null}
         isRefreshing={state.status === 'loading' && data !== null}
         isLoggingOut={isLoggingOut}
+        onRefresh={refresh}
         onLogout={logout}
       />
 

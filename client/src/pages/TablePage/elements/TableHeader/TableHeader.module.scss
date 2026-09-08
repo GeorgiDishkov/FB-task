@@ -45,3 +45,10 @@
   color: var(--c-text-muted);
   font-size: tokens.$font-size-small;
 }
+
+.meta {
+  display: flex;
+  gap: tokens.space(2);
+  flex-wrap: wrap;
+  align-items: center;
+}

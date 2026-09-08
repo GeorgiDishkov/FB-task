@@ -1,0 +1,34 @@
+@use 'tokens' as tokens;
+
+.badge {
+  display: inline-flex;
+  gap: tokens.space(2);
+  align-items: center;
+  padding: tokens.space(1) tokens.space(2);
+  font-size: tokens.$font-size-small;
+  border: 1px solid var(--c-border);
+  border-radius: tokens.$radius-pill;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+}
+
+.live {
+  color: var(--c-success);
+
+  .dot {
+    background: var(--c-success);
+  }
+}
+
+.cached {
+  color: var(--c-text-muted);
+
+  .dot {
+    background: var(--c-accent);
+  }
+}

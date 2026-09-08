@@ -78,3 +78,21 @@ export const describeRange = (page: number, pageSize: number, total: number): st
 
   return `${first}–${last} of ${total}`;
 };
+
+const MINUTE_MS = 60_000;
+const HOUR_MS = 3_600_000;
+
+/** "just now" / "3m ago" / "2h ago" — enough to judge freshness, no library needed. */
+export const describeAge = (savedAt: number, now: number): string => {
+  const elapsed = Math.max(0, now - savedAt);
+
+  if (elapsed < MINUTE_MS) {
+    return 'just now';
+  }
+
+  if (elapsed < HOUR_MS) {
+    return `${String(Math.floor(elapsed / MINUTE_MS))}m ago`;
+  }
+
+  return `${String(Math.floor(elapsed / HOUR_MS))}h ago`;
+};

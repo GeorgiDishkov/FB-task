@@ -1,3 +1,5 @@
+import { clearCacheByPrefix, readCache, writeCache } from '@lib/cache';
+import { isPeoplePage } from '@lib/schemas';
 import type { PeoplePage, Person } from '@/types';
 
 import { DATA_BASE_URL, PAGE_SIZE } from './constants';
@@ -10,6 +12,25 @@ import type { SwapiPeoplePageDto, SwapiPersonDto } from './types';
  */
 const peopleUrl = (page: number): string =>
   `${DATA_BASE_URL}/people/?page=${String(page)}`;
+
+/**
+ * fib.swapi.people.v1.page.4
+ * └┬┘ └──┬──┘ └─┬──┘ └┬┘ └──┬─┘
+ *  │     │      │     │     └─ one entry per page, so a page can expire on its own and
+ *  │     │      │     │        a partial cache is still useful
+ *  │     │      │     └─ schema version, from the envelope
+ *  │     │      └─ resource
+ *  │     └─ namespace, to avoid colliding with anything else on localhost
+ *  └─ app prefix
+ */
+const CACHE_PREFIX = 'fib.swapi.people.v1.page.';
+
+const cacheKey = (page: number): string => `${CACHE_PREFIX}${String(page)}`;
+
+/** Clears every cached page. Wired to the "Refresh data" control. */
+export const clearPeopleCache = (): void => {
+  clearCacheByPrefix(CACHE_PREFIX);
+};
 
 /**
  * The API has no id field and `name` is not guaranteed unique, but `url`
@@ -46,11 +67,36 @@ const mapPeoplePage = (dto: SwapiPeoplePageDto, page: number): PeoplePage => ({
   page,
 });
 
+export interface PeoplePageResult {
+  data: PeoplePage;
+  /** When the served copy was cached, or null when it came from the network. */
+  cachedAt: number | null;
+}
+
+/**
+ * Cache-aside, and checked *inside the service* rather than in the hook: every caller
+ * gets caching for free, and `usePeople` never learns that storage exists — which is
+ * also what keeps it testable against a stubbed service.
+ *
+ * An expired or invalid entry is discarded and refetched rather than served stale. The
+ * task asks for "simple cache validation logic", and discard is the honest reading;
+ * stale-while-revalidate would need a second "revalidating" state and a race guard.
+ */
 export const getPeoplePage = async (
   page: number,
   signal?: AbortSignal,
-): Promise<PeoplePage> => {
-  const dto = await requestJson<SwapiPeoplePageDto>(peopleUrl(page), signal);
+): Promise<PeoplePageResult> => {
+  const key = cacheKey(page);
+  const cached = readCache(key, isPeoplePage);
 
-  return mapPeoplePage(dto, page);
+  if (cached !== null) {
+    return { data: cached.payload, cachedAt: cached.savedAt };
+  }
+
+  const dto = await requestJson<SwapiPeoplePageDto>(peopleUrl(page), signal);
+  const data = mapPeoplePage(dto, page);
+
+  writeCache(key, data);
+
+  return { data, cachedAt: null };
 };

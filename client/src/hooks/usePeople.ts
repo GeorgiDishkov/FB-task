@@ -2,7 +2,7 @@ import { useCallback, useEffect, useReducer, useState } from 'react';
 
 import { toAppError } from '@lib/errors';
 import type { AppError } from '@lib/errors';
-import { getPeoplePage } from '@services/swapi';
+import { clearPeopleCache, getPeoplePage } from '@services/swapi';
 import type { PeoplePage } from '@/types';
 
 /**
@@ -14,39 +14,69 @@ import type { PeoplePage } from '@/types';
  * `data` is deliberately kept on 'loading' and 'error': that is what allows the table to
  * stay on screen, dimmed, during a page change instead of collapsing to a skeleton, and
  * to remain readable behind an error banner.
+ *
+ * `cachedAt` rides alongside rather than inside PeoplePage — where the copy came from is
+ * a transport concern, not part of the domain model.
  */
 export type PeopleState =
-  | { status: 'idle'; data: null; error: null }
-  | { status: 'loading'; data: PeoplePage | null; error: null }
-  | { status: 'success'; data: PeoplePage; error: null }
-  | { status: 'error'; data: PeoplePage | null; error: AppError };
+  | { status: 'idle'; data: null; cachedAt: null; error: null }
+  | { status: 'loading'; data: PeoplePage | null; cachedAt: number | null; error: null }
+  | { status: 'success'; data: PeoplePage; cachedAt: number | null; error: null }
+  | {
+      status: 'error';
+      data: PeoplePage | null;
+      cachedAt: number | null;
+      error: AppError;
+    };
 
 type PeopleAction =
   | { type: 'FETCH_START' }
-  | { type: 'FETCH_SUCCESS'; data: PeoplePage }
+  | { type: 'FETCH_SUCCESS'; data: PeoplePage; cachedAt: number | null }
   | { type: 'FETCH_ERROR'; error: AppError };
 
-const INITIAL_STATE: PeopleState = { status: 'idle', data: null, error: null };
+const INITIAL_STATE: PeopleState = {
+  status: 'idle',
+  data: null,
+  cachedAt: null,
+  error: null,
+};
 
 /**
- * useReducer rather than three useState calls: status, data and error must always change
- * together, and separate setters invite a render where status is 'success' but data is
- * still null.
+ * useReducer rather than several useState calls: status, data and error must always
+ * change together, and separate setters invite a render where status is 'success' but
+ * data is still null.
  */
 const peopleReducer = (state: PeopleState, action: PeopleAction): PeopleState => {
   switch (action.type) {
     case 'FETCH_START':
-      return { status: 'loading', data: state.data, error: null };
+      return {
+        status: 'loading',
+        data: state.data,
+        cachedAt: state.cachedAt,
+        error: null,
+      };
     case 'FETCH_SUCCESS':
-      return { status: 'success', data: action.data, error: null };
+      return {
+        status: 'success',
+        data: action.data,
+        cachedAt: action.cachedAt,
+        error: null,
+      };
     case 'FETCH_ERROR':
-      return { status: 'error', data: state.data, error: action.error };
+      return {
+        status: 'error',
+        data: state.data,
+        cachedAt: state.cachedAt,
+        error: action.error,
+      };
   }
 };
 
 interface UsePeopleResult {
   state: PeopleState;
   retry: () => void;
+  /** Discards every cached page and refetches the current one. */
+  refresh: () => void;
 }
 
 export const usePeople = (page: number): UsePeopleResult => {
@@ -60,9 +90,13 @@ export const usePeople = (page: number): UsePeopleResult => {
     dispatch({ type: 'FETCH_START' });
 
     getPeoplePage(page, controller.signal)
-      .then((data) => {
+      .then((result) => {
         if (!cancelled) {
-          dispatch({ type: 'FETCH_SUCCESS', data });
+          dispatch({
+            type: 'FETCH_SUCCESS',
+            data: result.data,
+            cachedAt: result.cachedAt,
+          });
         }
       })
       .catch((error: unknown) => {
@@ -85,11 +119,16 @@ export const usePeople = (page: number): UsePeopleResult => {
     };
   }, [page, reloadKey]);
 
-  // Bumping a key re-runs the effect, so retry goes through exactly the same code path
-  // as a normal load — including the abort handling. One path, one set of bugs.
+  // Bumping a key re-runs the effect, so both of these go through exactly the same code
+  // path as a normal load — including the abort handling. One path, one set of bugs.
   const retry = useCallback(() => {
     setReloadKey((current) => current + 1);
   }, []);
 
-  return { state, retry };
+  const refresh = useCallback(() => {
+    clearPeopleCache();
+    setReloadKey((current) => current + 1);
+  }, []);
+
+  return { state, retry, refresh };
 };
